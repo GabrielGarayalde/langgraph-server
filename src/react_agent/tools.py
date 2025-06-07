@@ -24,8 +24,8 @@ except ImportError:
 
 load_dotenv()
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-PINECONE_INDEX_NAME = "quickstart-py"
-DEFAULT_NAMESPACE = "corpus-data"
+PINECONE_INDEX_NAME = "anna-medical"
+DEFAULT_NAMESPACE = "anna-medical-namespace"
 _pinecone_client = None
 
 def get_pinecone_client():
