@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m ruff:*)",
+      "Bash(python3 -m ruff check:*)",
+      "Bash(pip install:*)",
+      "Bash(ls:*)",
+      "Bash(python3 -m pip install:*)",
+      "Bash(source:*)",
+      "Bash(.venv2/Scripts/python.exe:*)"
+    ],
+    "deny": []
+  }
+}

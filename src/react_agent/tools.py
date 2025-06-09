@@ -7,7 +7,7 @@ consider implementing more robust and specialized tools tailored to your needs.
 """
 
 import os
-from typing import Any, Callable, Dict, List, Optional, Annotated, cast
+from typing import Annotated, Any, Callable, Dict, List, Optional, cast
 
 from dotenv import load_dotenv
 from langchain_core.tools import tool
