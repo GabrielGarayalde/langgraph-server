@@ -6,13 +6,12 @@ These tools are intended as free examples to get started. For production use,
 consider implementing more robust and specialized tools tailored to your needs.
 """
 
-from typing import Any, Callable, List, Optional, Dict, Annotated, cast
-from math import sqrt
 import os
-from dotenv import load_dotenv
+from typing import Any, Callable, Dict, List, Optional, Annotated, cast
 
-from langchain_tavily import TavilySearch  # type: ignore[import-not-found]
+from dotenv import load_dotenv
 from langchain_core.tools import tool
+from langchain_tavily import TavilySearch  # type: ignore[import-not-found]
 
 from react_agent.configuration import Configuration
 
@@ -29,6 +28,11 @@ DEFAULT_NAMESPACE = "anna-medical-namespace"
 _pinecone_client = None
 
 def get_pinecone_client():
+    """Get or initialize the Pinecone client instance.
+    
+    Returns:
+        Pinecone client instance or None if not configured.
+    """
     global _pinecone_client
     if _pinecone_client is None and PINECONE_API_KEY and Pinecone:
         _pinecone_client = Pinecone(api_key=PINECONE_API_KEY)
