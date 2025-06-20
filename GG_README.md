@@ -4,9 +4,6 @@ pip install -U "langgraph-cli[inmem]"
 
 
 
-
-
-
 # LangGraph ReAct Agent Template
 
 [![CI](https://github.com/langchain-ai/react-agent/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/langchain-ai/react-agent/actions/workflows/unit-tests.yml)

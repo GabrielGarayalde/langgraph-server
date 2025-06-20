@@ -8,7 +8,10 @@
       "Bash(python3 -m pip install:*)",
       "Bash(source:*)",
       "Bash(.venv2/Scripts/python.exe:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git config:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }
