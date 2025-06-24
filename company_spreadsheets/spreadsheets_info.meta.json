@@ -1,0 +1,52 @@
+{
+  "excel_files": [
+    {
+      "filename": "AS_1720.1_2010_design_bending_capacity_formula_timber.xlsx",
+      "description": "Calculates timber design bending moment capacity Md = ϕ·k1·k4·k6·k9·k12·fb'·Z.",
+      "sheet": "Timber Bending Capacity",
+      "inputs": {
+        "phi_capacity_factor": "B4",
+        "k1_duration_factor": "B5",
+        "k4_partial_seasoning_factor": "B6",
+        "k6_temperature_factor": "B7",
+        "k9_strength_sharing_factor": "B8",
+        "k12_stability_factor": "B9",
+        "fb_prime_characteristic_strength_MPa": "B10",
+        "Z_section_modulus_mm3": "B11"
+      },
+      "outputs": {
+        "design_bending_moment_capacity_Md": "B13"
+      }
+    },
+    {
+      "filename": "AS_4100_M_o_reference_buckling_moment.xlsx",
+      "description": "Calculates reference buckling moment M_o per AS 4100 Clause 5.6.1.1(3).",
+      "sheet": "Reference Buckling Moment",
+      "inputs": {
+        "E_modulus_MPa": "B4",
+        "G_modulus_MPa": "B5",
+        "I_y_mm4": "B6",
+        "J_mm4": "B7",
+        "I_w_mm6": "B8",
+        "l_e_mm": "B9"
+      },
+      "outputs": {
+        "reference_buckling_moment_Mo_Nmm": "B11"
+      }
+    },
+    {
+      "filename": "design_moment_calculator.xlsx",
+      "description": "Calculates the design bending moment and stress for a simply supported beam with a distributed load.",
+      "sheet": "Design Moment Calculator",
+      "inputs": {
+        "Distributed_load_kN/m": "B4",
+        "Span_m": "B5",
+        "Section_modulus_mm3": "B6"
+      },
+      "outputs": {
+        "Maximum_design_moment_kNm": "B9",
+        "Maximum_bending_stress_MPa": "B10"
+      }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+uvicorn server:app --host 127.0.0.1 --port 2024 --reload
+
+langgraph dev -> localhost port 2024
+
+python server -> localhost port 3024 (just for the tools)
+
+conda deactivate
+
+.venv\Scripts\Activate.ps1
+
+
+------------------------------
+(FORMULA SEARCH) can you give me the reference buckling moment formula?
+----------------------------
+(TABLE SEARCH W VISION) can you give me table for all the combination factors for actions?
+--------------------------
+(FIGURE ANALYSIS W VISION) for a one way spanning concrete slab can you tell me how far over the support the bottom reinforcement needs to extend?
+--------------------
+(TABLE SEARCH) search the database for universal beams dimensions and properties, then get the S and Z for a 200uB29.8 from that page. also check this document for whether its a compact section and its yield stress fy.
+
+(DB SEARCH) now search the database for information on the moment bending capacity of a compact section and calculate it.
+
+(EXCEL CALCULATION) can you calculate the moment capacity ? also lets calculate the design bending moment and stress for a 6m simply supported beam with a 25kn/m distributed load. use the excel spreadsheet.
+
+-----------------------------
+(DB FORMULA SEARCH) search for the design bending moment formula of a timber beam
+
+(EXCEL SEARCH) Lets search to see if there are any excel sheets that we can use that perform this formula calculation. note the required input values
+
+(DB TABLE SEARCH) Lets find the values before executing the design bending capacity formula excel. for now lets get the capacity factor and the k1 duration factor. its a primary member in a house and the load duration is long (permanent).
+
+(FINAL EXCEL CALC) k4 to k12 are all 1. find the fb' from the appendix in the timber code for an F17 hardwood. and then calculate the Z based on a 50 wide 100 deep beam. then put this all into the excel.
+
+
+
+
