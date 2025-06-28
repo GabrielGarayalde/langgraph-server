@@ -24,6 +24,10 @@ class Configuration:
     )
 
     model: Annotated[str, {"__template_metadata__": {"kind": "llm"}}] = field(
+        # Switched default from Anthropic Claude Sonnet 4 to Google Gemini 1.5 Pro
+        # Ensure you have `GOOGLE_API_KEY` set in your environment.
+        # default="google/gemini-1.5-flash-latest",
+        # default="google/gemini-2.5-pro-latest",
         default="anthropic/claude-sonnet-4-20250514",
         # default="anthropic/claude-3.7-sonnet-latest",
         metadata={

@@ -1,6 +1,7 @@
 """Utility & helper functions."""
 
-from langchain.chat_models import init_chat_model
+from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import BaseMessage
 
@@ -24,4 +25,13 @@ def load_chat_model(fully_specified_name: str) -> BaseChatModel:
         fully_specified_name (str): String in the format 'provider/model'.
     """
     provider, model = fully_specified_name.split("/", maxsplit=1)
-    return init_chat_model(model, model_provider=provider)
+
+    if provider == "google":
+        return ChatGoogleGenerativeAI(model=model, temperature=0)
+    elif provider == "anthropic":
+        return ChatAnthropic(model_name=model, temperature=0, streaming=True)
+    else:
+        raise ValueError(
+            f"Unsupported chat model provider: '{provider}'. "
+            "Supported providers are 'google' and 'anthropic'."
+        )

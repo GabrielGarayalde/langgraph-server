@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 from typing import Annotated, Any, Callable, Dict, List, Optional, Union, cast
 import base64
+import asyncio
 from io import BytesIO
 
 from dotenv import load_dotenv
@@ -88,53 +89,20 @@ async def calculator(expression: str) -> float:
         return f"Error evaluating expression '{expression}': {e}"
 
 
-# async def calculate_slenderness_ratio(
-#     effective_length: float, 
-#     radius_of_gyration: float
-# ) -> str:
-#     """Calculate slenderness ratio for structural steel members per AS 4100-1998.
-    
-#     Args:
-#         effective_length: Effective length in mm
-#         radius_of_gyration: Radius of gyration in mm
-        
-
-#     """
-#     if radius_of_gyration <= 0:
-#         return "Error: Radius of gyration must be positive"
-    
-#     ratio = effective_length / radius_of_gyration
-    
-#     if ratio <= 50:
-#         classification = "Short column"
-#     elif ratio <= 100:
-#         classification = "Intermediate column"
-#     else:
-#         classification = "Slender column"
-    
-#     return f"""
-# SLENDERNESS CALCULATION (AS 4100-1998):
-# • Effective length (le): {effective_length:.1f} mm
-# • Radius of gyration (r): {radius_of_gyration:.1f} mm
-# • Slenderness ratio (le/r): {ratio:.2f}
-# • Classification: {classification}
-
-# DESIGN NOTES:
-# • AS 4100-1998 recommends le/r ≤ 200 for compression members
-# • Consider buckling effects for slender members
-# """
-
-
 @tool
 def search_engineering_database(
     query: Annotated[str, "Search query for engineering documents and standards"],
-    top_k: Annotated[int, "Number of results to return (default: 8)"] = 8,
-    namespace: Annotated[str, "Database namespace to search (default: aus-standards-namespace)"] = ENGINEERING_DEFAULT_NAMESPACE
+    top_k: Annotated[int, "Number of results to return (default: 10)"] = 10,
+    namespace: Annotated[str, "Database namespace to search (default: aus-standards-namespace)"] = ENGINEERING_DEFAULT_NAMESPACE,
+    source_document_id: Annotated[Optional[str], "Optional filter – only return chunks from this document ID"] = None,
 ) -> Dict[str, Any]:
     """Search the Pinecone vector database for engineering documents and standards.
     
     Returns a structured dictionary containing the search results, including metadata and content for each hit.
     This tool searches through Australian Standards related to engineering.
+
+    If *source_document_id* is supplied, the search is restricted to that document via a Pinecone metadata
+    filter.
     
     Use this tool to find:
     - Specific clauses and sections from australian standards
@@ -160,18 +128,24 @@ def search_engineering_database(
         index_dense = pc.Index(ENGINEERING_PINECONE_INDEX_NAME)
         index_sparse = pc.Index(ENGINEERING_SPARSE_PINECONE_INDEX_NAME)
 
+        # Build the query dict with optional metadata filter
+        query_dict: Dict[str, Any] = {
+            "top_k": min(top_k, 10),
+            "inputs": {"text": query},
+        }
+        if source_document_id:
+            # Apply metadata filter
+            query_dict["filter"] = {"source_document_id": source_document_id}
+
         # Common search parameters for both searches
         search_params = {
             "namespace": namespace,
-            "query": {
-                "top_k": min(top_k, 10),
-                "inputs": {"text": query}
-            },
+            "query": query_dict,
             "rerank": {
                 "model": "bge-reranker-v2-m3",
                 "top_n": min(top_k, 10),
-                "rank_fields": ["chunk_text"]
-            }
+                "rank_fields": ["chunk_text"],
+            },
         }
 
         # Execute searches on both indexes
@@ -981,14 +955,98 @@ Be specific and reference exact content from the image when answering."""
 
 
 # Add your tools to this list. The ReAct agent will be able to invoke them.
+
+@tool
+async def get_document_page_text(
+    document_id: str,
+    page_number: int,
+) -> Dict[str, Any]:
+    """Retrieve markdown text for a specific page of a document.
+
+    The preprocessing pipeline saves OCR-extracted text for every page as a
+    ``.md`` file in the following structure::
+
+        <base_dir>/<document_id>/<page_number>.md
+
+    Example::
+        as_1170.0_2002/1.md
+
+    Args:
+        document_id: Identifier of the source document (e.g., ``"as_1170.0_2002"``).
+        page_number: 1-indexed page number.
+
+    Returns:
+        A dictionary with either the page text (``type = 'page_text_success'``)
+        or helpful error information if the file cannot be found.
+    """
+    import asyncio  # local import avoids global dependency if asyncio missing
+
+    base_text_dir = (
+        r"C:\\Users\\gabri\\Desktop\\Engineering\\aust_standards_digitilization\\agentic_rag_v2\\agent-chat-ui\\public\\data\\page_text"
+    )
+
+    try:
+        # Build expected file path
+        file_path = os.path.join(base_text_dir, document_id, f"{page_number}.md")
+
+        # Handle missing file or directory with informative errors
+        if not os.path.exists(file_path):
+            doc_dir = os.path.join(base_text_dir, document_id)
+            if not os.path.isdir(doc_dir):
+                available_docs = []
+                if os.path.exists(base_text_dir):
+                    available_docs = [d for d in os.listdir(base_text_dir) if os.path.isdir(os.path.join(base_text_dir, d))]
+                return {
+                    "type": "error",
+                    "error": f"Document directory '{document_id}' not found",
+                    "available_documents": available_docs,
+                    "base_directory": base_text_dir,
+                }
+
+            # Directory exists, so list available page numbers for helpful feedback
+            available_pages: list[int] = []
+            for fname in os.listdir(doc_dir):
+                if fname.endswith(".md"):
+                    try:
+                        available_pages.append(int(fname.replace(".md", "")))
+                    except ValueError:
+                        pass
+            available_pages.sort()
+            return {
+                "type": "error",
+                "error": f"Page {page_number} not found for document '{document_id}'",
+                "available_pages": available_pages,
+                "document_directory": doc_dir,
+            }
+
+        # Read markdown content in a separate thread to avoid blocking
+        page_text = await asyncio.to_thread(lambda: Path(file_path).read_text(encoding="utf-8"))
+
+        return {
+            "type": "page_text_success",
+            "document_id": document_id,
+            "page_number": page_number,
+            "text": page_text,
+            "length": len(page_text),
+            "path": file_path,
+        }
+
+    except Exception as e:  # noqa: BLE001
+        return {
+            "type": "error",
+            "error": f"Error reading page text: {e}",
+            "document_id": document_id,
+            "page_number": page_number,
+        }
 # The tools should be functions that accept a single string argument and return a string.
 # The docstrings of the functions will be used to tell the LLM about the tool.
 TOOLS: List[Callable[[Any], Any]] = [
     search, 
     calculator, 
     search_engineering_database, 
-    search_engineering_database_filtered,
+    # search_engineering_database_filtered,
     list_excel_spreadsheets,
     execute_excel_calculations,
-    analyze_document_vision
+    analyze_document_vision,
+    get_document_page_text
 ]
