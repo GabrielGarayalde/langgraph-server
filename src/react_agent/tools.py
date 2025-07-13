@@ -423,91 +423,6 @@ def search_engineering_database_filtered(
             "details": "Please check your filter parameters and try again."
         }
 
-
-# @tool
-# async def search_medical_database(
-#     query: Annotated[str, "Search query for medical documents and literature"],
-#     top_k: Annotated[int, "Number of results to return (default: 5)"] = 5,
-#     namespace: Annotated[str, "Database namespace to search (default: anna-medical-namespace)"] = MEDICAL_DEFAULT_NAMESPACE
-# ) -> Dict[str, Any]:
-#     """Search the Pinecone vector database for medical documents and literature.
-    
-#     Returns a structured dictionary containing the search results, including metadata and content for each hit.
-#     This tool searches through medical literature, research papers, clinical guidelines, 
-#     drug information, and medical reference materials.
-    
-#     Use this tool to find:
-#     - Medical research and clinical studies
-#     - Drug information and pharmacology
-#     - Medical procedures and protocols
-#     - Disease information and symptoms
-#     - Clinical guidelines and best practices
-#     - Medical terminology and definitions
-#     """
-#     # Check if Pinecone is configured
-#     if not PINECONE_API_KEY:
-#         return {
-#             "type": "database_search_error",
-#             "error": "PINECONE_API_KEY not found in environment variables. Please configure Pinecone access."
-#         }
-#     try:
-#         # Get Pinecone client
-#         pc = get_pinecone_client()
-#         if not pc:
-#             return {
-#                 "type": "database_search_error",
-#                 "error": "Failed to initialize Pinecone client."
-#             }
-#         # Get the index
-#         index = pc.Index(MEDICAL_PINECONE_INDEX_NAME)
-#         # Prepare the search parameters
-#         search_params = {
-#             "namespace": namespace,
-#             "query": {
-#                 "top_k": min(top_k, 10),
-#                 "inputs": {"text": query}
-#             },
-#             "rerank": {
-#                 "model": "bge-reranker-v2-m3",
-#                 "top_n": min(top_k, 10),
-#                 "rank_fields": ["chunk_text"]
-#             }
-#         }
-#         # Execute the search
-#         pinecone_response = index.search(**search_params)
-#         # Process results
-#         if not pinecone_response.get("result", {}).get("hits"):
-#             return {
-#                 "type": "database_search_results",
-#                 "query": query,
-#                 "message": f"No relevant medical documents found for query: '{query}'",
-#                 "results": []
-#             }
-#         # Format the results
-#         processed_results = []
-#         for hit in pinecone_response["result"]["hits"]:
-#             fields = hit.get("fields", {})
-#             result_item = {
-#                 "source_document_id": fields.get("source_document_id", "Unknown Document"),
-#                 "page_number": fields.get("page_number", "Unknown Page"),
-#                 "score": hit.get("_score", 0.0),
-#                 "content": fields.get("chunk_text", ""),
-#             }
-#             processed_results.append(result_item)
-#         return {
-#             "type": "database_search_results",
-#             "query": query,
-#             "count": len(processed_results),
-#             "results": processed_results
-#         }
-#     except Exception as e:
-#         return {
-#             "type": "database_search_error",
-#             "error": f"Error searching medical database: {str(e)}",
-#             "details": "Please check your Pinecone configuration and try again."
-#         }
-
-
 # Google Generative AI imports
 try:
     import google.generativeai as genai
@@ -1038,6 +953,9 @@ async def get_document_page_text(
             "document_id": document_id,
             "page_number": page_number,
         }
+# Import Google Sheets tools
+from .sheets_tool import sheets_calculate, list_sheets_calculators
+
 # The tools should be functions that accept a single string argument and return a string.
 # The docstrings of the functions will be used to tell the LLM about the tool.
 TOOLS: List[Callable[[Any], Any]] = [
@@ -1047,6 +965,8 @@ TOOLS: List[Callable[[Any], Any]] = [
     # search_engineering_database_filtered,
     list_excel_spreadsheets,
     execute_excel_calculations,
+    sheets_calculate,  # Google Sheets calculator
+    list_sheets_calculators,  # List available Google Sheets
     analyze_document_vision,
     get_document_page_text
 ]
