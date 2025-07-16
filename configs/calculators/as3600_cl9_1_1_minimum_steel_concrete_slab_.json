@@ -1,0 +1,37 @@
+{
+  "name": "concrete_column",
+  "title": "AS 3600 Concrete Slab Reinforcement Calculator",
+  "description": "Australian Standards concrete slab minimum steel reinforcement calculation for two-way slabs",
+  "sheet_id": "1SZFXby7Ykma6knzuOvgyytrFslHxR63e8U692gERo2E",
+  "standard": "AS 3600-2009",
+  "inputs": {
+    "cover": "B2",
+    "bar_diameter": "B3",
+    "fc": "B4",
+    "fy": "B5",
+    "slab_depth": "B8"
+  },
+  "outputs": {
+    "fct_f": "B6",
+    "d_effective": "B9",
+    "ast_bd_beams": "B12",
+    "ast_required_beams": "B13",
+    "ast_bd_columns": "B16",
+    "ast_required_columns": "B17"
+  },
+  "input_descriptions": {
+    "cover": "Concrete cover in mm",
+    "bar_diameter": "Reinforcement bar diameter in mm", 
+    "fc": "Concrete compressive strength in MPa",
+    "fy": "Steel yield strength in MPa",
+    "slab_depth": "Total slab depth (D) in mm"
+  },
+  "output_descriptions": {
+    "fct_f": "Concrete tensile strength in MPa",
+    "d_effective": "Effective depth (d) in mm",
+    "ast_bd_beams": "Ast/bd ratio for beam support",
+    "ast_required_beams": "Required steel area for beam support in mm²/m",
+    "ast_bd_columns": "Ast/bd ratio for column support", 
+    "ast_required_columns": "Required steel area for column support in mm²/m"
+  }
+}

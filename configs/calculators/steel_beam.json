@@ -1,0 +1,31 @@
+{
+  "name": "steel_beam",
+  "title": "AS 4100 Steel Beam Calculator",
+  "description": "Australian Standards steel beam analysis including moment, deflection, and utilization calculations",
+  "sheet_id": "1yWPRmYfHlQ9zpkQQSfsxCnk0u0rVPXrJqec6Le48Wgs",
+  "standard": "AS 4100-1998",
+  "inputs": {
+    "beam_length": "B4",
+    "applied_load": "B5",
+    "steel_grade": "B6"
+  },
+  "outputs": {
+    "max_moment": "D4",
+    "max_deflection": "D5",
+    "utilization_ratio": "D6",
+    "safety_factor": "D7",
+    "compliance": "D9"
+  },
+  "input_descriptions": {
+    "beam_length": "Beam length in meters",
+    "applied_load": "Applied load in kN",
+    "steel_grade": "Steel grade in MPa"
+  },
+  "output_descriptions": {
+    "max_moment": "Maximum moment in kN·m",
+    "max_deflection": "Maximum deflection in mm",
+    "utilization_ratio": "Moment utilization ratio",
+    "safety_factor": "Safety check result (PASS/FAIL)",
+    "compliance": "AS 4100 compliance status"
+  }
+}

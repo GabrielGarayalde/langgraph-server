@@ -1,0 +1,35 @@
+{
+  "name": "wind_load",
+  "title": "AS 1170.2 Wind Load Calculator",
+  "description": "Australian Standards wind load calculations including pressure coefficients and AS 1170.2 analysis",
+  "sheet_id": "1Qa35rPUURaPki4fCjX23lRzoezeFdNoOOgaDBAMhWXE",
+  "standard": "AS 1170.2-2011",
+  "inputs": {
+    "building_height": "B20",
+    "wind_speed": "B21",
+    "terrain_category": "B22",
+    "building_width": "B23",
+    "building_length": "B24"
+  },
+  "outputs": {
+    "wind_pressure": "D20",
+    "design_wind_speed": "D21",
+    "pressure_coefficient": "D22",
+    "total_wind_force": "D23"
+  },
+  "input_descriptions": {
+    "building_height": "Building height in meters",
+    "wind_speed": "Regional wind speed in m/s",
+    "terrain_category": "Terrain category (1-4)",
+    "building_width": "Building width in meters",
+    "building_length": "Building length in meters"
+  },
+  "output_descriptions": {
+    "wind_pressure": "Design wind pressure in kPa",
+    "design_wind_speed": "Design wind speed in m/s",
+    "pressure_coefficient": "External pressure coefficient",
+    "total_wind_force": "Total wind force in kN"
+  },
+  "status": "template_only",
+  "notes": "Sheet ID needs to be created and configured by engineer"
+}

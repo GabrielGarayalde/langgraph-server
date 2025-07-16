@@ -18,49 +18,44 @@ class SheetsCalculatorService:
     """Service for executing calculations via Google Sheets."""
     
     def __init__(self):
-        """Initialize with service account credentials."""
-        self.credentials_path = Path(__file__).parent.parent.parent / "experiments" / "google_sheets" / "credentials" / "service_account.json"
+        """Initialize with service account credentials and load dynamic configs."""
+        # Use backend credentials directory
+        backend_dir = Path(__file__).parent.parent.parent
+        self.credentials_path = backend_dir / "credentials" / "service_account.json"
+        self.configs_dir = backend_dir / "configs" / "calculators"
         
-        # Sheet ID mapping - add your engineering calculators here
-        self.sheet_mapping = {
-            "steel_beam": "1yWPRmYfHlQ9zpkQQSfsxCnk0u0rVPXrJqec6Le48Wgs",  # Example sheet ID
-            "concrete_column": "YOUR_CONCRETE_COLUMN_SHEET_ID",
-            "timber_design": "YOUR_TIMBER_DESIGN_SHEET_ID",
-            # Add more as needed
-        }
-        
-        # Cell configurations for each calculator
-        self.calculator_configs = {
-            "steel_beam": {
-                "inputs": {
-                    "beam_length": "B4",
-                    "applied_load": "B5",
-                    "steel_grade": "B6"
-                },
-                "outputs": {
-                    "max_moment": "D4",
-                    "max_deflection": "D5",
-                    "utilization_ratio": "D6",
-                    "safety_factor": "D7",
-                    "compliance": "D9"
-                }
-            },
-            "concrete_column": {
-                "inputs": {
-                    "column_height": "B14",
-                    "axial_load": "B15",
-                    "concrete_grade": "B16"
-                },
-                "outputs": {
-                    "buckling_capacity": "D14",
-                    "utilization": "D15",
-                    "as3600_compliance": "D16"
-                }
-            }
-            # Add more calculator configurations
-        }
+        # Load calculator configurations dynamically
+        self.calculator_configs = self._load_calculator_configs()
         
         self._authenticate()
+    
+    def _load_calculator_configs(self) -> Dict[str, Dict]:
+        """Load all calculator configurations from JSON files."""
+        configs = {}
+        
+        if not self.configs_dir.exists():
+            print(f"Warning: Configs directory not found: {self.configs_dir}")
+            return configs
+        
+        for config_file in self.configs_dir.glob("*.json"):
+            try:
+                with open(config_file, 'r') as f:
+                    config = json.load(f)
+                
+                calc_name = config_file.stem
+                configs[calc_name] = {
+                    "sheet_id": config.get("sheet_id"),
+                    "inputs": config.get("inputs", {}),
+                    "outputs": config.get("outputs", {}),
+                    "title": config.get("title", calc_name),
+                    "description": config.get("description", ""),
+                    "standard": config.get("standard", "")
+                }
+                
+            except Exception as e:
+                print(f"Warning: Could not load config {config_file}: {e}")
+        
+        return configs
     
     def _authenticate(self):
         """Authenticate with Google Sheets API using service account."""
@@ -74,11 +69,13 @@ class SheetsCalculatorService:
     def list_available_calculators(self) -> List[Dict[str, str]]:
         """List all available calculator types."""
         calculators = []
-        for calc_name, sheet_id in self.sheet_mapping.items():
-            config = self.calculator_configs.get(calc_name, {})
+        for calc_name, config in self.calculator_configs.items():
             calculators.append({
                 "name": calc_name,
-                "sheet_id": sheet_id,
+                "title": config.get("title", calc_name),
+                "description": config.get("description", ""),
+                "standard": config.get("standard", ""),
+                "sheet_id": config.get("sheet_id", ""),
                 "inputs": list(config.get("inputs", {}).keys()),
                 "outputs": list(config.get("outputs", {}).keys())
             })
@@ -87,15 +84,15 @@ class SheetsCalculatorService:
     def execute_calculation(self, calculator_name: str, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Execute a calculation on the specified Google Sheet."""
         # Validate calculator exists
-        if calculator_name not in self.sheet_mapping:
-            available = list(self.sheet_mapping.keys())
+        if calculator_name not in self.calculator_configs:
+            available = list(self.calculator_configs.keys())
             return {
                 "error": f"Calculator '{calculator_name}' not found",
                 "available_calculators": available
             }
         
-        sheet_id = self.sheet_mapping[calculator_name]
-        config = self.calculator_configs.get(calculator_name, {})
+        config = self.calculator_configs[calculator_name]
+        sheet_id = config.get("sheet_id")
         
         if not config:
             return {"error": f"No configuration found for calculator '{calculator_name}'"}

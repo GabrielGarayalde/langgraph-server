@@ -1,0 +1,111 @@
+{
+  "name": "timber_strength",
+  "title": "AS 1720.1 Timber Beam Design Capacity Calculator",
+  "description": "Australian Standards timber beam design bending moment capacity calculation (Md) with all modification factors",
+  "sheet_id": "1Qa35rPUURaPki4fCjX23lRzoezeFdNoOOgaDBAMhWXE",
+  "standard": "AS 1720.1-2010",
+  "inputs": {
+    "beam_width": "B3",
+    "beam_depth": "B4",
+    "f_b_prime": "B5",
+    "application_category": "B6",
+    "load_duration": "B7",
+    "k4_factor": "B8",
+    "k6_factor": "B9",
+    "k9_factor": "B10",
+    "k12_stability": "B11",
+    "applied_moment": "B12"
+  },
+  "outputs": {
+    "section_modulus": "B15",
+    "capacity_factor": "B16",
+    "k1_duration": "B17",
+    "design_capacity_md": "B18",
+    "utilization_ratio": "B19",
+    "beam_classification": "B20"
+  },
+  "input_descriptions": {
+    "beam_width": {
+      "description": "Cross-sectional width of the timber beam in millimeters",
+      "unit": "mm",
+      "clause": "Section 3.2.1 - Net cross-section"
+    },
+    "beam_depth": {
+      "description": "Cross-sectional depth of the timber beam in millimeters",
+      "unit": "mm",
+      "clause": "Section 3.2.1 - Net cross-section"
+    },
+    "f_b_prime": {
+      "description": "Characteristic bending strength for the timber grade",
+      "unit": "MPa",
+      "clause": "Table H2.1 - F-grade characteristic values"
+    },
+    "application_category": {
+      "description": "Application category: 1 (houses), 2 (commercial/industrial primary), 3 (commercial/industrial secondary)",
+      "unit": "category",
+      "clause": "Table 2.5 - Capacity factors"
+    },
+    "load_duration": {
+      "description": "Design load duration in years (0 for 5 seconds, 0.014 for 5 days, 0.42 for 5 months, 50 for permanent)",
+      "unit": "years",
+      "clause": "Table G1 - Duration of load factor k1"
+    },
+    "k4_factor": {
+      "description": "Partial seasoning factor for moisture content effects",
+      "unit": "dimensionless",
+      "clause": "Clause 2.4.1.4 - Partial seasoning factor k4"
+    },
+    "k6_factor": {
+      "description": "Temperature factor for elevated temperature conditions",
+      "unit": "dimensionless",
+      "clause": "Clause 2.4.1.6 - Temperature factor k6"
+    },
+    "k9_factor": {
+      "description": "Strength sharing factor for parallel member systems",
+      "unit": "dimensionless",
+      "clause": "Clause 2.4.1.9 - Strength sharing factor k9"
+    },
+    "k12_stability": {
+      "description": "Stability factor for lateral-torsional buckling",
+      "unit": "dimensionless",
+      "clause": "Clause 3.2.3 - Member subjected to bending, k12 stability factor"
+    },
+    "applied_moment": {
+      "description": "Design bending moment M* applied to the beam",
+      "unit": "kN.m",
+      "clause": "Clause 3.2.3 - Design action effects"
+    }
+  },
+  "output_descriptions": {
+    "section_modulus": {
+      "description": "Section modulus Z = bd²/6 for rectangular sections",
+      "unit": "mm³",
+      "clause": "Clause 3.2.3 - Section properties"
+    },
+    "capacity_factor": {
+      "description": "Capacity factor φ based on application category",
+      "unit": "dimensionless",
+      "clause": "Table 2.5 - Capacity factors"
+    },
+    "k1_duration": {
+      "description": "Duration of load modification factor",
+      "unit": "dimensionless",
+      "clause": "Table G1 (Appendix G) - Duration factor k1"
+    },
+    "design_capacity_md": {
+      "description": "Design moment capacity Md = φ × k1 × k4 × k6 × k9 × k12 × f'b × Z",
+      "unit": "kN.m",
+      "clause": "Clause 3.2.3 - Design capacity in bending"
+    },
+    "utilization_ratio": {
+      "description": "Ratio of applied moment to design capacity (M*/Md)",
+      "unit": "dimensionless",
+      "clause": "Clause 1.5.3.2 - Limit states design"
+    },
+    "beam_classification": {
+      "description": "Assessment result: ADEQUATE if utilization ≤ 1.0, INADEQUATE if > 1.0",
+      "unit": "text",
+      "clause": "Clause 1.5.3.2 - Design requirement M* ≤ φMn"
+    }
+  }
+}
