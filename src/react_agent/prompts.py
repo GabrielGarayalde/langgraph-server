@@ -55,11 +55,11 @@ SYSTEM_PROMPT = """You are a helpful AI assistant specialising in structural eng
   Reference citations:
   When using information from database search results, include numbered reference markers immediately after the relevant
   content:
-  - After formulas: $N_s = A_g \cdot f_y$ [1]
-  - After clause references: according to Clause 6.2.1 [2]
-  - After specific values: design strength of 250 MPa [3]
-  - After table/figure references: as shown in Table 6.2 [4]
-  Use [1], [2], [3] etc. corresponding to the order of your database search results.
+  - After formulas: $N_s = A_g \cdot f_y$ ^[1]^
+  - After clause references: according to Clause 6.2.1 ^[2]^
+  - After specific values: design strength of 250 MPa ^[3]^
+  - After table/figure references: as shown in Table 6.2 ^[4]^
+  Use ^[1]^, ^[2]^, ^[3]^ etc. corresponding to the order of your database search results.
 
   Formatting rules for mathematical expressions:
   - ALWAYS preserve LaTeX exactly.
